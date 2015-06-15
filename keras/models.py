@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from __future__ import print_function
+#from __future__ import print_function
 import theano
 import theano.tensor as T
 import numpy as np
@@ -19,6 +19,7 @@ def standardize_y(y):
         y = np.reshape(y, (len(y), 1))
     return y
 
+#return a list with tuple element which are begin and end of each batch
 def make_batches(size, batch_size):
     nb_batch = int(np.ceil(size/float(batch_size)))
     return [(i*batch_size, min(size, (i+1)*batch_size)) for i in range(0, nb_batch)]
