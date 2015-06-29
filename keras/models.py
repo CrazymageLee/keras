@@ -24,6 +24,7 @@ def make_batches(size, batch_size):
     nb_batch = int(np.ceil(size/float(batch_size)))
     return [(i*batch_size, min(size, (i+1)*batch_size)) for i in range(0, nb_batch)]
 
+#wrap a numpy.array with []
 def standardize_X(X):
     if type(X) == list:
         return X
