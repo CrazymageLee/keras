@@ -77,7 +77,7 @@ class Model(object):
         self.class_mode = class_mode
 
         updates = self.optimizer.get_updates(self.params, self.regularizers, self.constraints, train_loss)
-
+        
         if type(self.X_train) == list:
             train_ins = self.X_train + [self.y]
             test_ins = self.X_test + [self.y]
@@ -87,6 +87,7 @@ class Model(object):
             test_ins = [self.X_test, self.y]
             predict_ins = [self.X_test]
 
+        #input is [[x1,x2,x3...],[y1,y2,y3]]   x1 and y1 are both vector
         self._train = theano.function(train_ins, train_loss, 
             updates=updates, allow_input_downcast=True, mode=theano_mode)
         self._train_with_acc = theano.function(train_ins, [train_loss, train_accuracy], 
