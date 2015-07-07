@@ -64,10 +64,12 @@ class Model(object):
         test_score = self.loss(self.y, self.y_test)
 
         if class_mode == "categorical":
+            #just compare whether the most probable is or not
             train_accuracy = T.mean(T.eq(T.argmax(self.y, axis=-1), T.argmax(self.y_train, axis=-1)))
             test_accuracy = T.mean(T.eq(T.argmax(self.y, axis=-1), T.argmax(self.y_test, axis=-1)))
 
         elif class_mode == "binary":
+            #after make prediction [0,0,1,0] like with round function, compare each class of each sample then accumulate and divide by n*k
             train_accuracy = T.mean(T.eq(self.y, T.round(self.y_train)))
             test_accuracy = T.mean(T.eq(self.y, T.round(self.y_test)))
         else:
