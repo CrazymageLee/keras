@@ -15,6 +15,11 @@ from six.moves import zip
 srng = RandomStreams()
 
 class Layer(object):
+    '''
+    contains 
+    params is T.shared type and can be get and set
+    get output is implemented by the specific kind of layer
+    '''
     def __init__(self):
         self.params = []
 
@@ -141,6 +146,7 @@ class Merge(object):
 class Dropout(Layer):
     '''
         Hinton's dropout.
+        that's the only place that need train @train
     '''
     def __init__(self, p):
         super(Dropout,self).__init__()
@@ -151,6 +157,7 @@ class Dropout(Layer):
         if self.p > 0.:
             retain_prob = 1. - self.p
             if train:
+                # @dropout
                 X *= srng.binomial(X.shape, p=retain_prob, dtype=theano.config.floatX)
             else:
                 X *= retain_prob

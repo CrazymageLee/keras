@@ -15,6 +15,9 @@ def ndim_tensor(ndim):
     return T.matrix()
 
 class Sequential(Layer):
+    '''
+    contain layers and their params regularizers and constraints
+    '''
     def __init__(self, layers=[]):
         self.layers = []
         self.params = []
