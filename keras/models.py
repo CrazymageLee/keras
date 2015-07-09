@@ -126,6 +126,9 @@ class Model(object):
         X = standardize_X(X)
         y = standardize_y(y)
 
+        '''
+        set validation set
+        '''
         do_validation = False
         if validation_data:
             try:
@@ -152,6 +155,9 @@ class Model(object):
 
         index_array = np.arange(len(y))
 
+        '''
+        add callbacks
+        '''
         callbacks = cbks.CallbackList(callbacks)
         if verbose:
             callbacks.append(cbks.BaseLogger())
@@ -168,11 +174,17 @@ class Model(object):
         })
         callbacks.on_train_begin()
 
+        '''
+        really train
+        '''
         for epoch in range(nb_epoch):
             callbacks.on_epoch_begin(epoch)
             if shuffle:
                 np.random.shuffle(index_array)
 
+            '''
+            this step make a list of[(begin1,end1),(begin2,end2),....]
+            '''
             batches = make_batches(len(y), batch_size)
             for batch_index, (batch_start, batch_end) in enumerate(batches):
                 batch_ids = index_array[batch_start:batch_end]
@@ -186,6 +198,7 @@ class Model(object):
 
                 ins = X_batch + [y_batch]
                 if show_accuracy:
+                    #the param with * means self._train_with_acc(ins[0],ins[1]) if ins is a longer list then more
                     loss, acc = self._train_with_acc(*ins)
                     batch_logs['accuracy'] = acc
                 else:
