@@ -19,7 +19,7 @@ from six.moves import range
     (it's still underfitting at that point, though).
 
     Note: the data was pickled with Python 2, and some encoding issues might prevent you
-    from loading it in Python 3. You might have to load it in Python 2, 
+    from loading it in Python 3. You might have to load it in Python 2,
     save it in a different format, load it in Python 3 and repickle it.
 '''
 
@@ -30,6 +30,7 @@ data_augmentation = True
 
 # the data, shuffled and split between tran and test sets
 (X_train, y_train), (X_test, y_test) = cifar10.load_data()
+print('X_train shape:', X_train.shape)
 print(X_train.shape[0], 'train samples')
 print(X_test.shape[0], 'test samples')
 
@@ -39,26 +40,26 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 
 model = Sequential()
 
-model.add(Convolution2D(32, 3, 3, 3, border_mode='full')) 
+model.add(Convolution2D(32, 3, 3, 3, border_mode='full'))
 model.add(Activation('relu'))
 model.add(Convolution2D(32, 32, 3, 3))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(poolsize=(2, 2)))
 model.add(Dropout(0.25))
 
-model.add(Convolution2D(64, 32, 3, 3, border_mode='full')) 
+model.add(Convolution2D(64, 32, 3, 3, border_mode='full'))
 model.add(Activation('relu'))
-model.add(Convolution2D(64, 64, 3, 3)) 
+model.add(Convolution2D(64, 64, 3, 3))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(poolsize=(2, 2)))
 model.add(Dropout(0.25))
 
 model.add(Flatten())
-model.add(Dense(64*8*8, 512, init='normal'))
+model.add(Dense(64*8*8, 512))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
-model.add(Dense(512, nb_classes, init='normal'))
+model.add(Dense(512, nb_classes))
 model.add(Activation('softmax'))
 
 # let's train the model using SGD + momentum (how original).
@@ -72,7 +73,7 @@ if not data_augmentation:
     X_test = X_test.astype("float32")
     X_train /= 255
     X_test /= 255
-    model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=10)
+    model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch)
     score = model.evaluate(X_test, Y_test, batch_size=batch_size)
     print('Test score:', score)
 
@@ -92,7 +93,7 @@ else:
         horizontal_flip=True, # randomly flip images
         vertical_flip=False) # randomly flip images
 
-    # compute quantities required for featurewise normalization 
+    # compute quantities required for featurewise normalization
     # (std, mean, and principal components if ZCA whitening is applied)
     datagen.fit(X_train)
 
@@ -104,20 +105,12 @@ else:
         # batch train with realtime data augmentation
         progbar = generic_utils.Progbar(X_train.shape[0])
         for X_batch, Y_batch in datagen.flow(X_train, Y_train):
-            loss = model.train(X_batch, Y_batch)
+            loss = model.train_on_batch(X_batch, Y_batch)
             progbar.add(X_batch.shape[0], values=[("train loss", loss)])
 
         print("Testing...")
         # test time!
         progbar = generic_utils.Progbar(X_test.shape[0])
         for X_batch, Y_batch in datagen.flow(X_test, Y_test):
-            score = model.test(X_batch, Y_batch)
+            score = model.test_on_batch(X_batch, Y_batch)
             progbar.add(X_batch.shape[0], values=[("test loss", score)])
-
-            
-
-
-
-
-
-
